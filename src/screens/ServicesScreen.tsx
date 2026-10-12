@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, View, FlatList } from 'react-native';
-import { SectionTitle, ServiceCard } from '../components';
+import { SectionTitle } from '../components/SectionTitle';
+import { ServiceCard } from '../components/ServiceCard';
 import { services } from '../data/services';
 import { Service } from '../types/Service';
 import { colors, spacing } from '../styles/theme';
@@ -11,10 +12,7 @@ type Props = {
 
 export function ServicesScreen({ navigation }: Props) {
   const openService = (service: Service) => {
-    navigation.navigate('Details', {
-      serviceId: service.id,
-      title: service.title,
-    });
+    // Навигация логикасы
   };
 
   return (

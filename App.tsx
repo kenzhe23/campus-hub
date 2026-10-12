@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -10,176 +10,260 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { LoginCard } from './src/components/LoginCard';
-import { ServiceCard } from './src/components/ServiceCard';
-import { services } from './src/data/services';
-import {
-  lightTheme,
-  darkTheme,
-  spacing,
-  radius,
-  fontSize,
-} from './src/theme';
+import { ServicesScreen } from './src/screens/ServicesScreen';
+import { colors, spacing } from './src/styles/theme';
 
 export default function App() {
   const [user, setUser] = useState<string | null>(null);
-  const [dark, setDark] = useState(false);
-  const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
-  const [favorites, setFavorites] = useState<string[]>(['3', '7']);
-
-  const theme = dark ? darkTheme : lightTheme;
-
+  const [activeTab, setActiveTab] = useState<'Home' | 'Services' | 'Profile'>('Home');
   const { width } = useWindowDimensions();
-  const columns = width >= 700 ? 3 : 2;
-  const cardWidth = (width - 40 - 12 * (columns - 1)) / columns;
-
-  const toggleFavorite = (id: string) => {
-    setFavorites((prev) =>
-      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
-    );
-  };
 
   if (!user) {
-    return <LoginCard onSuccess={setUser} theme={theme} />;
+    return (
+      <SafeAreaView style={styles.container}>
+        <LoginCard onLogin={(username) => setUser(username)} />
+      </SafeAreaView>
+    );
   }
 
-  const visibleServices = showOnlyFavorites
-    ? services.filter((s) => favorites.includes(s.id))
-    : services;
-
   return (
-    <SafeAreaView style={[styles.safeArea, { backgroundColor: theme.bg }]}>
-      <ScrollView contentContainerStyle={styles.container}>
-        <View style={styles.header}>
-          <View style={{ flex: 1 }}>
-            <Text style={[styles.welcome, { color: theme.primary }]}>
-              Қош келдіңіз, {user}!
-            </Text>
-            <Text style={[styles.title, { color: theme.text }]}>
-              Кампус сервистері
-            </Text>
-          </View>
-
-          <Pressable
-            onPress={() => setDark((v) => !v)}
-            style={[
-              styles.iconBtn,
-              { borderColor: theme.border, backgroundColor: theme.card },
-            ]}
-          >
-            <Ionicons
-              name={dark ? 'sunny-outline' : 'moon-outline'}
-              size={22}
-              color={theme.primary}
-            />
-          </Pressable>
-        </View>
-
-        <Text style={[styles.subtitle, { color: theme.muted }]}>
-          Қажетті сервисті таңдаңыз
-        </Text>
-
-        <Pressable
-          style={[
-            styles.filter,
-            { borderColor: theme.border, backgroundColor: theme.card },
-            showOnlyFavorites && {
-              backgroundColor: theme.primary,
-              borderColor: theme.primary,
-            },
-          ]}
-          onPress={() => setShowOnlyFavorites((v) => !v)}
-        >
-          <Ionicons
-            name={showOnlyFavorites ? 'star' : 'star-outline'}
-            size={18}
-            color={showOnlyFavorites ? '#FFFFFF' : theme.primary}
-          />
-          <Text
-            style={[
-              styles.filterText,
-              { color: showOnlyFavorites ? '#FFFFFF' : theme.primary },
-            ]}
-          >
-            {showOnlyFavorites ? 'Тек таңдаулылар' : 'Барлығын көрсету'}
-          </Text>
+    <SafeAreaView style={styles.container}>
+      {/* Header */}
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>Campus Hub</Text>
+        <Pressable>
+          <Ionicons name="notifications-outline" size={24} color="#FFFFFF" />
         </Pressable>
+      </View>
 
-        <View style={styles.grid}>
-          {visibleServices.map((service) => (
-            <ServiceCard
-              key={service.id}
-              service={service}
-              width={cardWidth}
-              theme={theme}
-              isFavorite={favorites.includes(service.id)}
-              onToggleFavorite={toggleFavorite}
-            />
-          ))}
-        </View>
+      {/* Main Content Area */}
+      <View style={styles.content}>
+        {activeTab === 'Home' && (
+          <ScrollView contentContainerStyle={styles.scrollContent}>
+            <View style={styles.welcomeCard}>
+              <Text style={styles.welcomeSubtitle}>Good morning,</Text>
+              <Text style={styles.welcomeTitle}>{user} S.</Text>
+              <Text style={styles.welcomeText}>Here's what's happening on campus today.</Text>
+            </View>
 
-        {visibleServices.length === 0 && (
-          <View style={styles.empty}>
-            <Ionicons name="star-outline" size={48} color={theme.muted} />
-            <Text style={{ color: theme.muted, marginTop: spacing.sm }}>
-              Таңдаулы карточкалар жоқ
-            </Text>
+            <View style={styles.sectionHeader}>
+              <Text style={styles.sectionTitle}>University Announcements</Text>
+              <Text style={styles.seeAll}>See all</Text>
+            </View>
+
+            <View style={styles.announcementCard}>
+              <Text style={styles.badge}>News</Text>
+              <Text style={styles.announcementTitle}>Spring Semester Registration Now Open</Text>
+              <Text style={styles.date}>Mar 12, 2024</Text>
+            </View>
+          </ScrollView>
+        )}
+
+        {activeTab === 'Services' && <ServicesScreen navigation={{ navigate: () => {} }} />}
+
+        {activeTab === 'Profile' && (
+          <View style={styles.profileContainer}>
+            <View style={styles.avatarContainer}>
+              <Ionicons name="person" size={50} color={colors.primary} />
+            </View>
+            <Text style={styles.profileName}>{user} S.</Text>
+            <Text style={styles.profileInfo}>Computer Science • Group CS-2026</Text>
+
+            <Pressable style={styles.menuItem} onPress={() => setUser(null)}>
+              <Ionicons name="log-out-outline" size={20} color="#EF4444" />
+              <Text style={styles.logoutText}>Log Out</Text>
+            </Pressable>
           </View>
         )}
-      </ScrollView>
+      </View>
+
+      {/* Bottom Navigation Tabs */}
+      <View style={styles.tabBar}>
+        <Pressable 
+          style={styles.tabItem} 
+          onPress={() => setActiveTab('Home')}
+        >
+          <Ionicons 
+            name="home" 
+            size={24} 
+            color={activeTab === 'Home' ? colors.primary : colors.muted} 
+          />
+          <Text style={[styles.tabText, activeTab === 'Home' && styles.activeTabText]}>Home</Text>
+        </Pressable>
+
+        <Pressable 
+          style={styles.tabItem} 
+          onPress={() => setActiveTab('Services')}
+        >
+          <Ionicons 
+            name="grid" 
+            size={24} 
+            color={activeTab === 'Services' ? colors.primary : colors.muted} 
+          />
+          <Text style={[styles.tabText, activeTab === 'Services' && styles.activeTabText]}>Services</Text>
+        </Pressable>
+
+        <Pressable 
+          style={styles.tabItem} 
+          onPress={() => setActiveTab('Profile')}
+        >
+          <Ionicons 
+            name="person" 
+            size={24} 
+            color={activeTab === 'Profile' ? colors.primary : colors.muted} 
+          />
+          <Text style={[styles.tabText, activeTab === 'Profile' && styles.activeTabText]}>Profile</Text>
+        </Pressable>
+      </View>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  safeArea: { flex: 1 },
-  container: { padding: spacing.xl },
+  container: {
+    flex: 1,
+    backgroundColor: colors.primary,
+  },
   header: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
   },
-  welcome: {
-    fontSize: fontSize.md,
-    fontWeight: '700',
+  headerTitle: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
   },
-  title: {
-    fontSize: fontSize.xxl,
-    fontWeight: '800',
-    marginTop: spacing.xs,
+  content: {
+    flex: 1,
+    backgroundColor: '#F8FAFC',
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    overflow: 'hidden',
   },
-  iconBtn: {
-    width: 44,
-    height: 44,
-    borderRadius: radius.md,
-    borderWidth: 1,
+  scrollContent: {
+    padding: spacing.md,
+  },
+  welcomeCard: {
+    backgroundColor: '#FFFFFF',
+    padding: spacing.md,
+    borderRadius: 16,
+    marginBottom: spacing.md,
+  },
+  welcomeSubtitle: {
+    fontSize: 14,
+    color: colors.muted,
+  },
+  welcomeTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: colors.text,
+    marginVertical: 4,
+  },
+  welcomeText: {
+    fontSize: 13,
+    color: colors.muted,
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: spacing.sm,
+  },
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: colors.text,
+  },
+  seeAll: {
+    fontSize: 13,
+    color: colors.primary,
+  },
+  announcementCard: {
+    backgroundColor: '#FFFFFF',
+    padding: spacing.md,
+    borderRadius: 12,
+    marginBottom: spacing.sm,
+  },
+  badge: {
+    fontSize: 11,
+    color: colors.primary,
+    fontWeight: '600',
+    marginBottom: 4,
+  },
+  announcementTitle: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: colors.text,
+  },
+  date: {
+    fontSize: 12,
+    color: colors.muted,
+    marginTop: 6,
+  },
+  profileContainer: {
+    flex: 1,
+    alignItems: 'center',
+    paddingTop: 40,
+    paddingHorizontal: spacing.md,
+  },
+  avatarContainer: {
+    width: 90,
+    height: 90,
+    borderRadius: 45,
+    backgroundColor: '#E2E8F0',
     justifyContent: 'center',
     alignItems: 'center',
+    marginBottom: spacing.sm,
   },
-  subtitle: {
-    fontSize: fontSize.md,
-    marginTop: 6,
+  profileName: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: colors.text,
+  },
+  profileInfo: {
+    fontSize: 14,
+    color: colors.muted,
     marginBottom: spacing.lg,
   },
-  filter: {
+  menuItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
-    paddingVertical: 10,
-    paddingHorizontal: spacing.lg,
-    borderRadius: radius.md,
-    borderWidth: 1,
-    alignSelf: 'flex-start',
-    marginBottom: spacing.lg,
+    backgroundColor: '#FFFFFF',
+    width: '100%',
+    padding: spacing.md,
+    borderRadius: 12,
+    marginTop: spacing.sm,
   },
-  filterText: {
-    fontWeight: '700',
+  logoutText: {
+    fontSize: 15,
+    color: '#EF4444',
+    fontWeight: '600',
+    marginLeft: spacing.sm,
   },
-  grid: {
+  tabBar: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: spacing.md,
-  },
-  empty: {
+    backgroundColor: '#FFFFFF',
+    height: 60,
+    borderTopWidth: 1,
+    borderTopColor: '#E2E8F0',
+    justifyContent: 'around',
     alignItems: 'center',
-    marginTop: spacing.xxl,
+  },
+  tabItem: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  tabText: {
+    fontSize: 11,
+    color: colors.muted,
+    marginTop: 2,
+  },
+  activeTabText: {
+    color: colors.primary,
+    fontWeight: '600',
   },
 });
