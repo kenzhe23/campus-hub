@@ -1,4 +1,3 @@
-// src/styles/theme.ts
 export const colors = {
   primary: '#0B66E4',
   surface: '#FFFFFF',

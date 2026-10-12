@@ -1,16 +1,16 @@
-// src/screens/ProfileScreen.tsx
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { ProfileMenuItem } from '../components/ProfileMenuItem';
+import { ProfileMenuItem } from '../components';
+import { colors } from '../styles/theme';
 
 export function ProfileScreen() {
   return (
     <View style={styles.container}>
-      <ProfileMenuItem title="Personal Information" onPress={() => {}} />
-      <ProfileMenuItem title="Notifications" onPress={() => {}} />
-      <ProfileMenuItem title="App Settings" onPress={() => {}} />
-      <ProfileMenuItem title="Help & Support" onPress={() => {}} />
-      <ProfileMenuItem title="Log Out" onPress={() => {}} />
+      <ProfileMenuItem title="Жеке мәліметтер" onPress={() => {}} />
+      <ProfileMenuItem title="Хабарландырулар" onPress={() => {}} />
+      <ProfileMenuItem title="Баптаулар" onPress={() => {}} />
+      <ProfileMenuItem title="Көмек және қолдау" onPress={() => {}} />
+      <ProfileMenuItem title="Шығу" onPress={() => {}} />
     </View>
   );
 }
@@ -18,6 +18,6 @@ export function ProfileScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F8FAFC',
+    backgroundColor: colors.background,
   },
 });
