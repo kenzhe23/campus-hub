@@ -8,7 +8,7 @@ import {
   KeyboardAvoidingView,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Theme, spacing, radius, fontSize } from '../theme';
+import { Theme, spacing, radius, fontSize } from '../styles/theme';
 
 type Props = {
   onSuccess: (login: string) => void;
