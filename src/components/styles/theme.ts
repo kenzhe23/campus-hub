@@ -1,9 +1,11 @@
+// src/styles/theme.ts
 export const colors = {
   primary: '#0B66E4',
   surface: '#FFFFFF',
+  background: '#F8FAFC',
   text: '#0F172A',
   muted: '#64748B',
-  background: '#F8FAFC',
+  border: '#E2E8F0',
 };
 
 export const spacing = {
