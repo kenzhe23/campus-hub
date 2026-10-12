@@ -1,7 +1,5 @@
-// src/screens/ServicesScreen.tsx
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
-import { FlatList } from 'react-native-gesture-handler'; // немесе 'react-native'
+import { StyleSheet, View, FlatList } from 'react-native';
 import { SectionTitle, ServiceCard } from '../components';
 import { services } from '../data/services';
 import { Service } from '../types/Service';
