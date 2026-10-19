@@ -12,4 +12,4 @@ React Native және TypeScript көмегімен жасалған мобил�
 - `src/styles/` — Ортақ түстер мен стильдер (theme.ts)
 
 ### Орындаған:
-Студент: Kenzhebek Kaldzhanov
+Студент: Кенжебек Қалджанов
